@@ -1,16 +1,21 @@
 import requests
 import json
 import urllib.parse
+from lxml import html
 
 g_API = 'https://f2e-test.herokuapp.com'
 g_session = requests.Session()
 
 def Authenticate():
+    page = requests.get(g_API)
+    tree = html.fromstring(page.content)
+    csrf = tree.xpath("string(//input[@name='csrf']/@value)")
+
     url = urllib.parse.urljoin(g_API, 'api/auth')
     payload = {
         'username': 'f2e-candidate',
         'password': 'P@ssw0rd',
-        'csrf':'XWi7XuWj-zy9JE5-r4h61kqFwYcDlf0SndOk'
+        'csrf': csrf
     }
 
     # Authenticating to get cookies
